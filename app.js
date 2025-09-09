@@ -1,6 +1,11 @@
 import express from "express";
 import "dotenv/config";
 import { startDb } from "./src/config/database.js";
+import { userModel } from "./src/models/user.model.js";
+import { profileModel } from "./src/models/profile.model.js";
+import { articleModel } from "./src/models/article.model.js";
+import { tagModel } from "./src/models/tag.model.js";
+import { articleTagModel } from "./src/models/articleTag.model.js";
 
 
 const PORT = process.env.PORT;
@@ -13,5 +18,12 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, async () => {
     await startDb();
+    await userModel.sync();
+    await profileModel.sync();
+    await articleModel.sync();
+    await tagModel.sync();
+    await articleTagModel.sync();
     console.log(`Server corriendo en: http://localhost:${PORT}`);
 });
+
+startDb();
