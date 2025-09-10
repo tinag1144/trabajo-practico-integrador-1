@@ -72,25 +72,6 @@ export const login = async (req, res) => {
     return res.status(500).json({ message: "Error del servidor" + error})
 }};
 
-// Controlador para obtener el perfil del usuario autenticado
-export const getProfile = async (req, res) => {
-    const userId = req.user.id; 
-    try {
-        const user = await userModel.findByPk(userId, {
-            attributes: { exclude: ["password"] }, 
-            include: [{ 
-                model: profileModel,
-                as: "profile" }],
-       });
-       if (!user) {
-           return res.status(404).json({ message: "Usuario no encontrado" });
-       }
-       return res.status(200).json(user);
-    } catch (error) {
-        console.error("Error al obtener perfil:", error);
-        return res.status(500).json({ message: "Error del servidor" });
-    }
-};
 
 // Controlador para el cierre de sesión de usuario
 export const logout = (req, res) => {
