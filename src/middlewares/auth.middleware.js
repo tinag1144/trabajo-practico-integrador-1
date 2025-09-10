@@ -9,7 +9,7 @@ export const authMiddleware = (req, res, next) => {
             return res.status(401).json({ message: "Token no autenticado" });
         }; //si no hay token, no esta autenticado
 
-        const decoded = verifyToken(token); //se decodifica el token con la funcion que se creó en helpers 
+        const decoded = verifyToken(token, process.env.JWT_SECRET); //se decodifica el token con la funcion que se creó en helpers 
         req.user = decoded; //se agrega la informacion del usuario a la req para usarla en las rutas que necesiten autenticacion
 
         next(); 

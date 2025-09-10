@@ -1,6 +1,7 @@
 import { userModel } from "../models/user.model.js";
 import { profileModel } from "../models/profile.model.js";
-import { hashPassword } from "../helpers/bcrypt.helper.js";
+import { comparePassword, hashPassword } from "../helpers/bcrypt.helper.js";
+import { generateToken } from "../helpers/jwt.helper.js";
 
 // Controlador para registrar un nuevo usuario y crear su perfil asociado
 export const registerUser = async (req, res) => {
@@ -30,4 +31,69 @@ export const registerUser = async (req, res) => {
         console.error("Error al registrar usuario:", error);
         res.status(500).json({ message: "Error del servidor" });
     }
+};
+
+// Controlador para el inicio de sesión de usuario
+export const login = async (req, res) => {
+    const { username, password } = req.body;
+    try { 
+        //buscar usuario por username
+        const user = await userModel.findOne({ where: { username },
+            include: [{ 
+                model: profileModel,
+                as: "profile" }],
+       });
+       //Validar contraseña hasheada
+    const hashPass = await comparePassword(password, user.password);
+
+    if (!user) {
+        return res.status(401).json({ message: "Credenciales inválidas" });
+     };
+    if (!hashPass) {
+        return res.status(401).json({ message: "Credenciales inválidas" });
+    };
+
+
+     //Generar token
+    const token = generateToken({
+        id: user.id,
+        username: user.username,
+        role: user.role,
+    });
+
+    //Guardar token en cookies
+    res.cookie("token", token, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 1000, // 1 hora
+    });
+
+    return res.status(200).json({ message: "Inicio de sesión exitoso" });
+} catch (error) {
+    return res.status(500).json({ message: "Error del servidor" + error})
+}};
+
+// Controlador para obtener el perfil del usuario autenticado
+export const getProfile = async (req, res) => {
+    const userId = req.user.id; 
+    try {
+        const user = await userModel.findByPk(userId, {
+            attributes: { exclude: ["password"] }, 
+            include: [{ 
+                model: profileModel,
+                as: "profile" }],
+       });
+       if (!user) {
+           return res.status(404).json({ message: "Usuario no encontrado" });
+       }
+       return res.status(200).json(user);
+    } catch (error) {
+        console.error("Error al obtener perfil:", error);
+        return res.status(500).json({ message: "Error del servidor" });
+    }
+};
+
+// Controlador para el cierre de sesión de usuario
+export const logout = (req, res) => {
+    res.clearCookie("token");
+    return res.status(200).json({ message: "Cierre de sesión exitoso" });
 };
