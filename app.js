@@ -3,12 +3,13 @@ import "dotenv/config";
 import { startDb } from "./src/config/database.js";
 //import { userModel } from "./src/models/user.model.js";
 //import { profileModel } from "./src/models/profile.model.js";
+//import { tagModel } from "./src/models/tag.model.js";
 import { articleModel } from "./src/models/article.model.js";
-import { tagModel } from "./src/models/tag.model.js";
 import { articleTagModel } from "./src/models/articleTag.model.js";
 import { authRouter } from "./src/routes/auth.routes.js";
 import { profileRouter } from "./src/routes/profile.routes.js";
 import { userRouter } from "./src/routes/user.routes.js";
+import { tagRouter } from "./src/routes/tag.routes.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
@@ -25,7 +26,7 @@ app.use(cookieParser());
 
 //RUTAS
 app.use("/api/auth", authRouter, profileRouter); 
-app.use("/api", userRouter)
+app.use("/api", userRouter, tagRouter);
 
 app.get("/", (req, res) => {
   res.send("Hola desde el server :p");
@@ -33,10 +34,10 @@ app.get("/", (req, res) => {
 
 app.listen(PORT, async () => {
     await startDb();
-   // await userModel.sync();
-  // await profileModel.sync();
+    //await userModel.sync();
+    //await profileModel.sync();
+    //await tagModel.sync();
     await articleModel.sync();
-    await tagModel.sync();
     await articleTagModel.sync();
     console.log(`Server corriendo en: http://localhost:${PORT}`);
 });
