@@ -43,3 +43,15 @@ export const deleteArticleTag = async (req, res) => {
         return res.status(500).json({ message: "Error del servidor" });
     }
 };
+
+
+//relacion
+articleModel.belongsToMany(tagModel, {
+    through: articleTagModel, 
+    as: "tag_id", 
+    foreignKey: "article_id" });
+
+tagModel.belongsToMany(articleModel, { 
+    through: articleTagModel, 
+    as: "article_id", 
+    foreignKey: "tag_id" });

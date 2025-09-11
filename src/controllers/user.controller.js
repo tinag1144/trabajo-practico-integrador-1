@@ -36,9 +36,9 @@ export const getUserById = async (req, res) => {
         });
         res.status(200).json(user); 
     } catch (error) {
-        console.error("Error al obtener usuario por ID", error);
         return res.status(500).json({ message: "Error del servidor", error });
     }   
+    
 };
 
 //controlador para actualizar un usuario por su id

@@ -23,7 +23,6 @@ export const articleModel = sequelize.define("Article", {
     },
     user_id: {
         type: DataTypes.INTEGER,
-        unique: true,
         allowNull: false,
         references:{
             model: "Users", 

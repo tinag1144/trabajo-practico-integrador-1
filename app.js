@@ -27,8 +27,15 @@ app.use(cors({
 app.use(cookieParser());
 
 //RUTAS
-app.use("/api/auth", authRouter, profileRouter); 
-app.use("/api", userRouter, tagRouter, articleRouter, articleTagRouter);
+app.use("/api/auth", authRouter); 
+app.use("/api/auth", profileRouter);
+
+app.use("/api", userRouter);
+app.use("/api", tagRouter);
+app.use("/api", articleRouter);
+app.use("/api", articleTagRouter);
+
+
 
 app.get("/", (req, res) => {
   res.send("Hola desde el server :p");

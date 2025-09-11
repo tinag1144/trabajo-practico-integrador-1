@@ -43,24 +43,31 @@ export const getArticleById = async (req, res) => {
 };
 
 //cotrolador para listar los articles del usuario logueado
-export const getArticlesByUser = async (req, res) => {
+export const getArticlesByUserLogged = async (req, res) => {
+    //  console.log("req.user en controlador:", req.user); 
     try {
-         const articleUserLogin = await userModel.findByPk(req.user.id,
-             {
-                attributes: { exclude: ["password"] },
-                include: {
-                    model: articleModel,
-                     as: "articles",
-      },
-    });
+        const userId = req.user.id;
+
+        const userWithArticles = await userModel.findByPk(userId, {
+            attributes: { exclude: ["password"] },
+            include: [{
+                model: articleModel,
+                as: "articles"
+            }]
+        });
+
+        return res.status(200).json(userWithArticles);
     } catch (error) {
-        return res.status(500).json({ message: "Error al obtener los artículos del usuario logueado" });
+        console.error("Error al obtener artículos del usuario:", error);
+        return res.status(500).json({ message: "Error del servidor" });
     }
 };
+
 
 //controlador para traer un articulo por su id del usuario logueado
 export const getArticleByUserId = async (req, res) => {
     try {
+        const { id } = req.params;
         const article = await articleModel.findOne({
             where: {
                 id: id,
@@ -69,7 +76,7 @@ export const getArticleByUserId = async (req, res) => {
          });
          return res.status(200).json(article);
     } catch (error) {
-        return res.status(500).json({ message: "Error al obtener el artículo del usuario logueado" });
+        return res.status(500).json({ message: "Error al obtener el artículo del usuario logueado", error: error.message });
     }
 };
 

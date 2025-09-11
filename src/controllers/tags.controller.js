@@ -24,11 +24,12 @@ export const getTag = async (req, res) => {
 
 //controlador para obtener todas las etiquetas con sus articulos 
 export const getTagAndArticles = async (req, res) => {
+    const { id } = req.params;
     try {
         const tag = await tagModel.findByPk(id, {
             include: {
                 model: articleModel,
-                as: "articles"
+                as: "article_id"
             }
         });
         res.status(200).json(tag);
@@ -54,7 +55,7 @@ export const updateTag = async (req, res) => {
 export const deleteTag = async (req, res) => {
     const { id } = req.params;
     try {
-        const tag = tagmodel.findByPk(id);
+        const tag = await tagModel.findByPk(id);
         await tag.destroy();
         res.status(200).json({ message: "Etiqueta eliminada exitosamente" });
     } catch (error) {
